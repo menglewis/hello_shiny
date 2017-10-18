@@ -18,7 +18,7 @@ ui <- fluidPage(
   )
 )
 
-server <- function(input, output) {
+server <- function(input, output, session) {
   output$distPlot <- renderPlot({
     x <- faithful$waiting
     bins <- seq(min(x), max(x), length.out = input$bins + 1)
@@ -27,6 +27,7 @@ server <- function(input, output) {
          xlab = "Waiting time (in mins)",
          main = "Histogram of waiting times")
   })
+  session$allowReconnect(TRUE)
 }
 
 shinyApp(ui = ui, server = server)
