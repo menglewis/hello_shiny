@@ -46,7 +46,8 @@
                             }),
                             headers: new Headers({
                                 'Content-Type': 'application/json'
-                            })
+                            }),
+                            credentials: 'same-origin'
                         }).then(res => res.json())
                         .catch(error => {
                             console.log('Error: ', error) 
