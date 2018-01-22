@@ -1,7 +1,67 @@
-<form method="post">
-    Message
-    <input type="text" name="message" />
-    Number of Times
-    <input type="number" name="times" />
-    <button type="submit">Submit</button>
-</form>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+        <script src="https://unpkg.com/vue"></script>
+    </head>
+    <body>
+        <section class="section">
+            <div id="app" class="container">
+                <div class="field">
+                    <label class="label">Message</label>
+                    <div class="control">
+                        <input class="input" type="text" placeholder="Log Message" v-model="message">
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Log this many times</label>
+                    <div class="control">
+                        <input class="input" type="number" v-model="times">
+                    </div>
+                </div>                          
+
+                <button class="button is-primary" @click="logMessages">Submit</button>
+                <p v-html="serverMessage"></p>
+            </div>
+        </section>
+
+        <script>
+            var app = new Vue({
+                el: '#app',
+                data: {
+                    message: '',
+                    times: 1,
+                    serverMessage: ''
+                },
+                methods: {
+                    logMessages: function() {
+                        console.log(this.message, this.times);
+                        fetch('/log', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                message: this.message,
+                                times: this.times
+                            }),
+                            headers: new Headers({
+                                'Content-Type': 'application/json'
+                            })
+                        }).then(res => res.json())
+                        .catch(error => {
+                            console.log('Error: ', error) 
+                            this.serverMessage = 'Logging failed'
+                        })
+                        .then(response => {
+                            console.log('Success: ', response)
+                            this.serverMessage = 'Logged message successfully'
+                            setTimeout(() => {
+                                this.serverMessage = ''
+                            }, 3000)
+                        })
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
