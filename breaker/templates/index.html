@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+        <script src="https://unpkg.com/vue"></script>
+    </head>
+    <body>
+        <section class="section">
+            <div id="app" class="container">
+                <button class="button is-primary" @click="breakApp">Break App</button>
+                <button class="button is-primary" @click="fixApp">Fix App</button>
+                <p v-html="serverMessage"></p>
+            </div>
+        </section>
+
+        <script>
+            var app = new Vue({
+                el: '#app',
+                data: {
+                    serverMessage: ''
+                },
+                methods: {
+                    breakApp: function() {
+                        fetch('/break', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                broken: true
+                            }),
+                            headers: new Headers({
+                                'Content-Type': 'application/json'
+                            }),
+                            credentials: 'same-origin'
+                        })
+                        .then(response => {
+                            this.serverMessage = 'Broken!'
+                        })
+                    },
+                    fixApp: function() {
+                        fetch('/break', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                broken: false
+                            }),
+                            headers: new Headers({
+                                'Content-Type': 'application/json'
+                            }),
+                            credentials: 'same-origin'
+                        })
+                        .then(response => {
+                            this.serverMessage = 'Fixed!'
+                        })
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
