@@ -1,6 +1,8 @@
 import os
 import sys
 import time
+from datetime import datetime
+from datetime import timedelta
 from flask import Flask, render_template, request, jsonify
 
 
@@ -16,11 +18,11 @@ class AppBrokenError(Exception):
         }
 
 app = Flask(__name__)
-BROKEN = False
+broken_until = datetime.utcnow()
 
 @app.route('/', methods=['GET'])
 def index():
-    if BROKEN:
+    if broken_until > datetime.utcnow():
         raise AppBrokenError('App is broken')
     return render_template('index.html')
 
@@ -30,9 +32,10 @@ def override():
 
 @app.route('/break', methods=['POST'])
 def disable():
-    global BROKEN
+    global broken_until
     data = request.get_json()
-    BROKEN = data['broken']
+    duration = data['duration']
+    broken_until = datetime.utcnow() + timedelta(seconds=int(duration))
     return jsonify({'message': 'Success'})
 
 delay = os.environ.get('STARTUP_DELAY', None)

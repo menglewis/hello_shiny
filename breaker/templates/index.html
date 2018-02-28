@@ -9,8 +9,21 @@
     <body>
         <section class="section">
             <div id="app" class="container">
-                <button class="button is-primary" @click="breakApp">Break App</button>
-                <button class="button is-primary" @click="fixApp">Fix App</button>
+                <div class="field has-addons has-addons-cenetered">
+                    <p class="control">
+                            Break app for &nbsp;
+                    </p>
+                    <p class="control">
+                        <input class="input" v-model="duration" />
+                    </p>
+                    <p class="control">
+                        &nbsp;seconds.
+                    </p>
+                </div>
+                
+                
+                
+                <button class="button is-primary" @click="breakApp">Break</button>
                 <p v-html="serverMessage"></p>
             </div>
         </section>
@@ -19,6 +32,7 @@
             var app = new Vue({
                 el: '#app',
                 data: {
+                    duration: 2,
                     serverMessage: ''
                 },
                 methods: {
@@ -26,7 +40,7 @@
                         fetch('/break', {
                             method: 'POST',
                             body: JSON.stringify({
-                                broken: true
+                                duration: this.duration
                             }),
                             headers: new Headers({
                                 'Content-Type': 'application/json'
@@ -35,21 +49,6 @@
                         })
                         .then(response => {
                             this.serverMessage = 'Broken!'
-                        })
-                    },
-                    fixApp: function() {
-                        fetch('/break', {
-                            method: 'POST',
-                            body: JSON.stringify({
-                                broken: false
-                            }),
-                            headers: new Headers({
-                                'Content-Type': 'application/json'
-                            }),
-                            credentials: 'same-origin'
-                        })
-                        .then(response => {
-                            this.serverMessage = 'Fixed!'
                         })
                     }
                 }
