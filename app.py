@@ -1,4 +1,6 @@
 import logging
+from datetime import datetime
+import json
 import sys
 from flask import Flask, render_template, request, jsonify
 
@@ -38,7 +40,12 @@ def log():
     message = data['message']
     level = data['level']
 
-    getattr(logger, level)(message)
+    json_message = {
+        'message': message,
+        'level': level,
+        'timestamp': datetime.utcnow().isoformat(),
+    }
+    getattr(logger, level)(json.dumps(json_message))
 
     return jsonify({'message': 'Logged message successfully'})
 
